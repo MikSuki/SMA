@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class='container'>
+        <br>
+        <div class="row text-center">
+            <label class='col-2 align-middle'>股票代碼</label>
+            <input id='stock_id' type="text" class="form-control col-2" placeholder="ex: 2330">
+            <button id='add_btn' class='col-2'>新增</button>
+        </div>
+
+        <br><br>
+        <!-- <div class="w-25 h-50" style='overflow: auto;'>
+        </div> -->
+        <form action="result" method="post">
+            {% csrf_token %}
+            <div class="row h-50 ">
+                <div id='stock_list' class="col-4 h-100 border px-0" style='overflow: auto;'>
+                    <div class="list-group" id="list-tab" role="tablist">
+                        <!-- <input href="#" class="list-group-item list-group-item-action" readonly="true" value='2330'
+                            style="cursor:'pointer';"></input> -->
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class='row justify-content-center'>
+                <input type="submit" class='col-auto' value="送出">
+            </div>
+        </form>
+    </div>
+    <script>
+        (() => {
+            const ELEM_ID = {
+                add_btn: '#add_btn',
+                add_stock_id: '#stock_id',
+                stock_list: '#stock_list'
+            }
+            const inp_CLASS = ['list-group-item', 'list-group-item-action']
+            var clicked = null;
+
+            $(ELEM_ID.add_btn).click(function () {
+                const input = $(ELEM_ID.add_stock_id)
+                const value = input.val()
+                if (check_input(value)) return
+                input.val('')
+                // add new one in stock list
+                const new_stock_inp = document.createElement('input')
+                inp_CLASS.forEach(e => { new_stock_inp.classList.add(e) });
+                new_stock_inp.value = value
+                new_stock_inp.name = 'stock'
+                new_stock_inp.href = "#"
+                new_stock_inp.readOnly = true
+                new_stock_inp.style.cursor = 'pointer'
+                new_stock_inp.addEventListener("mousedown", function (event) {
+                    event.preventDefault();
+                });
+                new_stock_inp.onclick = function () {
+                    if (clicked === this)
+                        clicked.remove()
+                    else
+                        clicked = this
+                }
+                $(ELEM_ID.stock_list).append(new_stock_inp)
+            });
+
+            function check_input(value) {
+                if (value.length == 0) return true
+                return false
+            }
+        })();
+
+    </script>
+</body>
+
+</html>
