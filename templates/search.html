@@ -15,6 +15,23 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+
+    <style>
+        /* #search {
+            position: absolute;
+            background-color: #f6f6f6;
+            min-width: 230px;
+            border: 1px solid #ddd;
+            z-index: 1;
+        } */
+
+        a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,6 +40,13 @@
         <div class="row text-center">
             <label class='col-2 align-middle'>股票代碼</label>
             <input id='stock_id' type="text" class="form-control col-2" placeholder="ex: 2330">
+            <ul id='search-list' class="list-group">
+                <!-- <a href='#' class="list-group-item">1101</a>
+                <a href='#' class="list-group-item">1102</a>
+                <a href='#' class="list-group-item">1103</a>
+                <a href='#' class="list-group-item">1104</a>
+                <a href='#' class="list-group-item">1107</a> -->
+            </ul>
             <button id='add_btn' class='col-2'>新增</button>
         </div>
 
@@ -38,6 +62,12 @@
                             style="cursor:'pointer';"></input> -->
                     </div>
                 </div>
+                <div class='col'>
+                    <table class="table table-bordered table-striped">
+                        <tbody id="stock_tbody">
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <br>
             <div class='row justify-content-center'>
@@ -47,19 +77,61 @@
     </div>
     <script>
         (() => {
+            const stock_data = JSON.parse('{{ value|safe }}');
+            console.log(stock_data)
             const ELEM_ID = {
                 add_btn: '#add_btn',
                 add_stock_id: '#stock_id',
-                stock_list: '#stock_list'
+                stock_list: '#stock_list',
+                search: '#search-list'
             }
             const inp_CLASS = ['list-group-item', 'list-group-item-action']
+            const MAX_SEARCH_NUM = 5
             var clicked = null;
+
+            // create search list
+            // const search_list = $(ELEM_ID.search)
+            // for (let [key, value] of Object.entries(stock_data)) {
+            //     for (let [key2, value2] of Object.entries(value)) {
+            //         const a = document.createElement('a')
+            //         a.setAttribute('class', inp_CLASS[0])
+            //         a.innerHTML = key2
+            //         a.style.display = 'none'
+            //         search_list.append(a)
+            //     }
+            // }
+
+            // $(ELEM_ID.add_stock_id).keyup(function () {
+            //     let input, filter, ul, li, a, i;
+            //     let cnt = MAX_SEARCH_NUM
+            //     filter = this.value
+            //     a = search_list.find("a");
+            //     for (i = 0; i < a.length; i++)
+            //         a[i].style.display = "none";
+            //     for (i = 0; i < a.length; i++) {
+            //         txtValue = a[i].innerText;
+            //         if (txtValue.indexOf(filter) > -1) {
+            //             a[i].style.display = "";
+            //             --cnt
+            //             console.log('show')
+            //         }
+            //         if (cnt <= 0) break
+            //     }
+            //     console.log(cnt)
+            // })
+
+
 
             $(ELEM_ID.add_btn).click(function () {
                 const input = $(ELEM_ID.add_stock_id)
-                const value = input.val()
-                if (check_input(value)) return
+                const value = check_input(input.val())
                 input.val('')
+                // alert('type error')
+
+                if (!value) {
+                    console.log('type error')
+                    return
+                }
                 // add new one in stock list
                 const new_stock_inp = document.createElement('input')
                 inp_CLASS.forEach(e => { new_stock_inp.classList.add(e) });
@@ -80,8 +152,14 @@
                 $(ELEM_ID.stock_list).append(new_stock_inp)
             });
 
-            function check_input(value) {
-                if (value.length == 0) return true
+            function check_input(k) {
+                if (k.length == 0) return false
+                for (let [key, value] of Object.entries(stock_data)) {
+                    for (let [key2, value2] of Object.entries(value)) {
+                        if (k == key2)
+                            return key2 + '   ' + value2
+                    }
+                }
                 return false
             }
         })();
