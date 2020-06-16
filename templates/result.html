@@ -6,7 +6,8 @@
 
 <body>
     <script>
-        var a = JSON.parse('{{ value|safe }}')
+        // var a = JSON.parse("{{ value|safe }}")
+        var a = "{{ value|safe }}"
         console.log(a)
     </script>
 

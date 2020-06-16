@@ -1,0 +1,1 @@
+{"commSaleData":{"SaleTime":"2020-06-16T08:30:00","SalePr":0.0,"Cf":0.0,"CfPercent":0.0,"SaleQty":0},"warrantCount":0,"industryCategory":"","stockComposition":0}

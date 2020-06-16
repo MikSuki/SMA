@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from polls import final_project
+# from polls import crawler
+import subprocess
 
 
 def search(request):
@@ -14,6 +15,18 @@ def search(request):
 
 def result(request):
     stock_list = request.POST.getlist('stock')
+    
+    cmd = ['python', 'polls/crawler.py']
+    for s in stock_list:
+        print(s)
+        cmd.append(s)
+    print(cmd)
     return render(request, 'result.html', {
-        'value': final_project.func(stock_list),
+        'value': runCrawler(cmd),
     })
+
+def runCrawler(cmd):
+    output = subprocess.check_output(cmd, shell=True)
+    # print(str(output ))
+    return str(output )
+

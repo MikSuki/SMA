@@ -53,7 +53,7 @@
         <br><br>
         <!-- <div class="w-25 h-50" style='overflow: auto;'>
         </div> -->
-        <form action="result" method="post">
+        <form id='form' action="result" method="post">
             {% csrf_token %}
             <div class="row h-50 ">
                 <div id='stock_list' class="col-4 h-100 border px-0" style='overflow: auto;'>
@@ -70,10 +70,10 @@
                 </div>
             </div>
             <br>
-            <div class='row justify-content-center'>
-                <input type="submit" class='col-auto' value="送出">
-            </div>
         </form>
+        <div class='row justify-content-center'>
+            <button id='submit_btn' class='col-auto'>送出</button>
+        </div>
     </div>
     <script>
         (() => {
@@ -120,7 +120,13 @@
             //     console.log(cnt)
             // })
 
-
+            $('#submit_btn').on('click', function(){
+                stocks_inps = document.getElementsByName("stock");
+                if(stocks_inps.length == 0) return
+                for(let i = 0; i < stocks_inps.length; ++i)
+                    stocks_inps[i].value = stocks_inps[i].value.substring(0, 4)
+                $('#form').submit()
+            })
 
             $(ELEM_ID.add_btn).click(function () {
                 const input = $(ELEM_ID.add_stock_id)
@@ -153,7 +159,13 @@
             });
 
             function check_input(k) {
+                // zero ?
                 if (k.length == 0) return false
+                // exist ?
+                stocks_inps = document.getElementsByName("stock");
+                for(let i = 0; i < stocks_inps.length; ++i)
+                    if(k == stocks_inps[i].value.substring(0, 4)) return
+                // correct ?
                 for (let [key, value] of Object.entries(stock_data)) {
                     for (let [key2, value2] of Object.entries(value)) {
                         if (k == key2)
