@@ -129,6 +129,7 @@
                 new_stock_inp.value = key
                 new_stock_inp.href = "#"
                 new_stock_inp.style.cursor = 'pointer'
+                new_stock_inp.readOnly = true
                 new_stock_inp.onclick = function () {
                     $(ELEM_ID.list0).empty()
                     for (let [key2, value2] of Object.entries(value)) {
@@ -196,7 +197,7 @@
                 for (let [key, value] of Object.entries(STOCK_DATA)) {
                     for (let [key2, value2] of Object.entries(value)) {
                         if (k == key2)
-                            return key2 + '   ' + value2
+                            return key2// + '   ' + value2
                     }
                 }
                 return false

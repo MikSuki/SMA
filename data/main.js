@@ -22,6 +22,8 @@ fs.readFile('stock.txt', 'utf8', function (err, data) {
         // console.log(data_arr[i - 1])
         data_arr = data_arr.slice(i)
     }
+
+    console.log(json)
     // console.log(json)
     fs.writeFile('stock_list.json', JSON.stringify(json), 'utf8', function (err2) {
         if (err2) throw err2;
