@@ -2,16 +2,130 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <script>
-        // var a = JSON.parse("{{ value|safe }}")
-        var a = "{{ value|safe }}"
-        console.log(a)
-    </script>
+    <div class='container h-50'>
+        <br>
+        <div class='row h-50'>
+            <div class="col-5 h-100 border px-0">
+                <div class="list-group-item text-center">建議購買</div>
+                <div id='stock_list_0' style='overflow: auto; height: 40vh'>
+                    <div class="list-group" id="list-tab" role="tablist">
+                        <!-- <input href="#" class="list-group-item list-group-item-action" readonly="true" value='2330'
+                            style="cursor:'pointer';"></input> -->
+                    </div>
+                </div>
+            </div>
+            <div class='col-1'></div>
+            <div class="col-5 h-100 border px-0">
+                <div class="list-group-item text-center">不建議購買</div>
+                <div id='stock_list_1' style='overflow: auto; height: 40vh'>
+                    <div class="list-group" id="list-tab" role="tablist">
+                        <!-- <input href="#" class="list-group-item list-group-item-action" readonly="true" value='2330'
+                            style="cursor:'pointer';"></input> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <table id='stock_table' class="table" style='display: none;'>
+            <tbody>
+                <tr>
+                    <td>股票代碼</td>
+                    <td id='t0'></td>
+                </tr>
+                <tr>
+                    <td>股價</td>
+                    <td id='t1'></td>
+                </tr>
+                <tr>
+                    <td>成交量</td>
+                    <td id='t2'></td>
+                </tr>
+                <tr>
+                    <td>ROE</td>
+                    <td id='t3'></td>
+                </tr>
+                <tr>
+                    <td>本益比</td>
+                    <td id='t4'></td>
+                </tr>
+                <tr>
+                    <td>現金殖利率</td>
+                    <td id='t5'></td>
+                </tr>
+                <tr>
+                    <td>總殖利率</td>
+                    <td id='t6'></td>
+                </tr>
+                <tr>
+                    <td>是否連續5年配股</td>
+                    <td id='t7'></td>
+                </tr>
+                <tr>
+                    <td>適合存股</td>
+                    <td id='t8'></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <h1>Result</h1>
+    <script>
+        (() => {
+            const TH = ['股票代碼', '股價', '成交量', 'ROE', '本益比', '現金殖利率', '總殖利率', '是否連續5年配股', '適合存股']
+            const DATA = JSON.parse('{{ value|safe }}')
+            console.log(DATA)
+            if (DATA.length == 0) alert('err')
+                const ELEM_ID = {
+                    list0: '#stock_list_0',
+                    list1: '#stock_list_1',
+                    table: '#stock_table',
+                    td: '#t'
+                }
+            const inp_CLASS = ['list-group-item', 'list-group-item-action']
+
+            for (let [key, value] of Object.entries(DATA)) {
+                const new_stock_inp = document.createElement('input')
+                inp_CLASS.forEach(e => { new_stock_inp.classList.add(e) });
+                new_stock_inp.value = value[0]
+                new_stock_inp.name = 'stock'
+                new_stock_inp.href = "#"
+                new_stock_inp.readOnly = true
+                new_stock_inp.style.cursor = 'pointer'
+                new_stock_inp.onclick = function () {
+                    $(ELEM_ID.table).show()
+                    for (let i = 0; i < TH.length; ++i) {
+                        let str = value[i].toString()
+                        if (str == 'True') str = '是'
+                        else if (str == 'False') str = '否'
+                        else if (str == '-999999') str = '－'
+                        $(ELEM_ID.td + i).html(str)
+                    }
+                }
+                if (value[8] === 'True')
+                    $(ELEM_ID.list0).append(new_stock_inp)
+                else
+                    $(ELEM_ID.list1).append(new_stock_inp)
+            }
+
+        })();
+
+    </script>
 </body>
 
 </html>

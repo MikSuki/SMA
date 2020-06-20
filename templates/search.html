@@ -38,16 +38,17 @@
     <div class='container'>
         <br>
         <div class="row text-center">
-            <label class='col-2 align-middle'>股票代碼</label>
-            <input id='stock_id' type="text" class="form-control col-2" placeholder="ex: 2330">
-            <ul id='search-list' class="list-group">
-                <!-- <a href='#' class="list-group-item">1101</a>
+            <label class='col-1 align-middle'>股票代碼</label>
+            <input id='stock_id' type="text" class="form-control col-1" placeholder="ex: 2330">
+            <!-- <ul id='search-list' class="list-group">
+                <a href='#' class="list-group-item">1101</a>
                 <a href='#' class="list-group-item">1102</a>
                 <a href='#' class="list-group-item">1103</a>
                 <a href='#' class="list-group-item">1104</a>
-                <a href='#' class="list-group-item">1107</a> -->
-            </ul>
-            <button id='add_btn' class='col-2'>新增</button>
+                <a href='#' class="list-group-item">1107</a>
+            </ul> -->
+            <button id='add_btn' class='col-1'>新增</button>
+            <div class='col-9 text-center'>產業代碼</div>
         </div>
 
         <br><br>
@@ -55,18 +56,19 @@
         </div> -->
         <form id='form' action="result" method="post">
             {% csrf_token %}
-            <div class="row h-50 ">
-                <div id='stock_list' class="col-4 h-100 border px-0" style='overflow: auto;'>
+            <div class="row h-50">
+                <div id='stock_list_0' class="col-5 h-100 border px-0" style='overflow: auto;'>
                     <div class="list-group" id="list-tab" role="tablist">
                         <!-- <input href="#" class="list-group-item list-group-item-action" readonly="true" value='2330'
                             style="cursor:'pointer';"></input> -->
                     </div>
                 </div>
-                <div class='col'>
-                    <table class="table table-bordered table-striped">
-                        <tbody id="stock_tbody">
-                        </tbody>
-                    </table>
+                <div class='col-1'></div>
+                <div id='stock_list_1' class="col-5 h-100 border px-0" style='overflow: auto;'>
+                    <div class="list-group" id="list-tab" role="tablist">
+                        <!-- <input href="#" class="list-group-item list-group-item-action" readonly="true" value='2330'
+                            style="cursor:'pointer';"></input> -->
+                    </div>
                 </div>
             </div>
             <br>
@@ -77,12 +79,13 @@
     </div>
     <script>
         (() => {
-            const stock_data = JSON.parse('{{ value|safe }}');
-            console.log(stock_data)
+            const STOCK_DATA = JSON.parse('{{ value|safe }}');
+            console.log(STOCK_DATA)
             const ELEM_ID = {
                 add_btn: '#add_btn',
                 add_stock_id: '#stock_id',
-                stock_list: '#stock_list',
+                list0: '#stock_list_0',
+                list1: '#stock_list_1',
                 search: '#search-list'
             }
             const inp_CLASS = ['list-group-item', 'list-group-item-action']
@@ -91,7 +94,7 @@
 
             // create search list
             // const search_list = $(ELEM_ID.search)
-            // for (let [key, value] of Object.entries(stock_data)) {
+            // for (let [key, value] of Object.entries(STOCK_DATA)) {
             //     for (let [key2, value2] of Object.entries(value)) {
             //         const a = document.createElement('a')
             //         a.setAttribute('class', inp_CLASS[0])
@@ -120,15 +123,39 @@
             //     console.log(cnt)
             // })
 
-            $('#submit_btn').on('click', function(){
+            for (let [key, value] of Object.entries(STOCK_DATA)) {
+                const new_stock_inp = document.createElement('input')
+                inp_CLASS.forEach(e => { new_stock_inp.classList.add(e) });
+                new_stock_inp.value = key
+                new_stock_inp.href = "#"
+                new_stock_inp.style.cursor = 'pointer'
+                new_stock_inp.onclick = function () {
+                    $(ELEM_ID.list0).empty()
+                    for (let [key2, value2] of Object.entries(value)) {
+                        $(ELEM_ID.add_stock_id).val(key2)
+                        addStock()
+                    }
+                }
+                $(ELEM_ID.list1).append(new_stock_inp)
+            }
+            // $(ELEM_ID.list1)
+
+            $('#submit_btn').on('click', function () {
                 stocks_inps = document.getElementsByName("stock");
-                if(stocks_inps.length == 0) return
-                for(let i = 0; i < stocks_inps.length; ++i)
+                if (stocks_inps.length == 0) return
+                for (let i = 0; i < stocks_inps.length; ++i)
                     stocks_inps[i].value = stocks_inps[i].value.substring(0, 4)
                 $('#form').submit()
             })
 
-            $(ELEM_ID.add_btn).click(function () {
+            $(ELEM_ID.add_btn).click(addStock);
+
+            $(ELEM_ID.add_stock_id).keydown(function (event) {
+                if (event.which == 13)
+                    $(ELEM_ID.add_btn).click()
+            });
+
+            function addStock() {
                 const input = $(ELEM_ID.add_stock_id)
                 const value = check_input(input.val())
                 input.val('')
@@ -155,18 +182,18 @@
                     else
                         clicked = this
                 }
-                $(ELEM_ID.stock_list).append(new_stock_inp)
-            });
+                $(ELEM_ID.list0).append(new_stock_inp)
+            }
 
             function check_input(k) {
                 // zero ?
                 if (k.length == 0) return false
                 // exist ?
                 stocks_inps = document.getElementsByName("stock");
-                for(let i = 0; i < stocks_inps.length; ++i)
-                    if(k == stocks_inps[i].value.substring(0, 4)) return
+                for (let i = 0; i < stocks_inps.length; ++i)
+                    if (k == stocks_inps[i].value.substring(0, 4)) return
                 // correct ?
-                for (let [key, value] of Object.entries(stock_data)) {
+                for (let [key, value] of Object.entries(STOCK_DATA)) {
                     for (let [key2, value2] of Object.entries(value)) {
                         if (k == key2)
                             return key2 + '   ' + value2
